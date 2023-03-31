@@ -1,0 +1,29 @@
+html, body {
+    margin: 0;
+}
+
+@media (orientation: landscape) {
+    .main-element {
+        flex-flow: row;
+    }
+}
+@media (orientation: portrait) {
+    .main-element {
+        flex-flow: column;
+    }
+}
+
+.main-element {
+    display: flex;
+    /* flex-flow: column; */
+    /* justify-content: center;
+    align-items: center; */
+}
+.main-canvas-wrapper {
+    display: flex;
+    width: 100vmin;
+    height: 100vmin;
+}
+.main-canvas {
+    background-color: lightgray;
+}
