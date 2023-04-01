@@ -6,7 +6,7 @@
   "scripts": {
     "prepare": "husky install",
     "build": "npm run lint && npm run format && npm run bundle",
-    "start": "webpack-dev-server",
+    "start": "webpack-dev-server --mode development",
     "test": "npm run lint && jest",
     "test:watch": "jest --watch",
     "lint": "eslint . --ext .ts,.tsx --fix",
