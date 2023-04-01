@@ -6,10 +6,10 @@ import {
     magnitude,
     newVector2,
     newZeroVector2,
-    ReadonlyVector2,
+    type ReadonlyVector2,
     set,
     sub,
-    Vector2,
+    type Vector2,
 } from "./vector2";
 
 type ParticleTemplate = {

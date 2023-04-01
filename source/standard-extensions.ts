@@ -26,6 +26,19 @@ export function ignore(..._args: unknown[]): void {
     /* 引数を無視する関数 */
 }
 
+export interface ArrowKind<parameterKind = unknown, bodyKind = unknown> {
+    parameter: parameterKind;
+    body: bodyKind;
+}
+export type Call<F extends ArrowKind, T> = (F & { parameter: T })["body"];
+
+export type MapTuple<
+    F extends ArrowKind,
+    Xs extends readonly unknown[]
+> = Xs extends readonly [infer X, ...infer Xs]
+    ? [Call<F, X>, ...MapTuple<F, Xs>]
+    : Xs;
+
 export interface Progress<TArgs extends unknown[]> {
     (...args: TArgs): void;
 }
