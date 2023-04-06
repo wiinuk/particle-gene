@@ -4,7 +4,7 @@ const TypedCssModulePlugin = require("./webpack-typed-css-module-plugin");
 const webpack = require("webpack");
 
 const entry = `./source/main.tsx`;
-const output = path.join(__dirname, "public");
+const output = path.join(__dirname, "docs");
 
 /** @type {import("webpack").Configuration} */
 const config = {
