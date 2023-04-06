@@ -5,13 +5,16 @@
   "description": "",
   "scripts": {
     "prepare": "husky install",
-    "build": "npm run lint && npm run format && npm run bundle",
-    "start": "webpack-dev-server --mode development",
+    "build": "npm run build:wasm && npm run lint && npm run format && npm run bundle",
+    "start": "run-p development:wasm development",
     "test": "npm run lint && jest",
     "test:watch": "jest --watch",
     "lint": "eslint . --ext .ts,.tsx --fix",
     "format": "prettier --write \"**/*.{ts,tsx}\"",
-    "bundle": "webpack"
+    "bundle": "webpack --mode production",
+    "build:wasm": "wasm-pack build --target bundler --release",
+    "development": "webpack-dev-server --mode development",
+    "development:wasm": "cargo watch --watch ./source-rust/ --shell \"npm run build:wasm\""
   },
   "repository": {
     "type": "git",
@@ -34,6 +37,7 @@
     "eslint-plugin-rulesdir": "^0.2.1",
     "husky": "^7.0.4",
     "jest": "^27.5.1",
+    "npm-run-all": "^4.1.5",
     "prettier": "^2.5.1",
     "ts-jest": "^27.1.5",
     "ts-loader": "^9.2.6",

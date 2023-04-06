@@ -1,12 +1,31 @@
-import { mainSpec, workerSpec } from "./channel-specs";
-import {
-    type SpecToModule,
-    dispatchMessage,
-    portToModule,
-} from "./worker-module";
+import { mainSpec, workerSpec } from "./module-specs";
+import { connect } from "./p2p";
 import { Rectangle, createParticleManager } from "./simulation";
 import { error } from "./standard-extensions";
 import { type Vector2, newZeroVector2 } from "./vector2";
+
+const mainModule = connect(
+    self,
+    mainSpec,
+    {
+        initialize,
+        mouseDown() {
+            mouse.clicked = true;
+        },
+        mouseUp() {
+            mouse.clicked = false;
+        },
+        mouseMove(offsetX, offsetY) {
+            mouse.canvasX = offsetX;
+            mouse.canvasY = offsetY;
+        },
+        canvasWrapperResized(offsetWidth, offsetHeight) {
+            wrapperOffsetWidth = offsetWidth;
+            wrapperOffsetHeight = offsetHeight;
+        },
+    },
+    workerSpec
+);
 
 interface Camera {
     /** [m] */
@@ -26,7 +45,7 @@ interface World {
     context: OffscreenCanvasRenderingContext2D;
     camera: Camera;
 }
-function createFpsCounter(mainModule: SpecToModule<typeof mainSpec>) {
+function createFpsCounter() {
     let frameCount = 0;
     let previousFrameCount: number | null = null;
     let previousTime = 0;
@@ -151,9 +170,10 @@ const mouse = {
 let wrapperOffsetWidth = 0;
 let wrapperOffsetHeight = 0;
 
-const mainModule = portToModule(self, mainSpec);
+async function initialize(canvas: OffscreenCanvas) {
+    const { greet_message } = await import("../pkg/particle_wasm");
+    console.log(greet_message("test"));
 
-function initialize(canvas: OffscreenCanvas) {
     wrapperOffsetWidth = canvas.height;
     wrapperOffsetHeight = canvas.width;
 
@@ -171,7 +191,7 @@ function initialize(canvas: OffscreenCanvas) {
         now: performance.now(),
     };
 
-    const fpsCounter = createFpsCounter(mainModule);
+    const fpsCounter = createFpsCounter();
 
     const timeScale = 5;
     const reporter = createReporter();
@@ -314,21 +334,3 @@ function initialize(canvas: OffscreenCanvas) {
 
     requestAnimationFrame(render);
 }
-
-dispatchMessage(self as DedicatedWorkerGlobalScope, workerSpec, {
-    initialize,
-    mouseDown() {
-        mouse.clicked = true;
-    },
-    mouseUp() {
-        mouse.clicked = false;
-    },
-    mouseMove(offsetX, offsetY) {
-        mouse.canvasX = offsetX;
-        mouse.canvasY = offsetY;
-    },
-    canvasWrapperResized(offsetWidth, offsetHeight) {
-        wrapperOffsetWidth = offsetWidth;
-        wrapperOffsetHeight = offsetHeight;
-    },
-});

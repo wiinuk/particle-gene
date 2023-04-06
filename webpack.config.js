@@ -22,10 +22,14 @@ const config = {
                 test: /\.tsx?$/,
                 use: "ts-loader",
             },
+            {
+                test: /.wasm$/,
+                type: "webassembly/async",
+            },
         ],
     },
     resolve: {
-        extensions: [".ts", ".tsx", ".js", ".jsx", ".json"],
+        extensions: [".ts", ".tsx", ".js", ".jsx", ".json", ".wasm"],
     },
     output: {
         path: output,
@@ -36,6 +40,9 @@ const config = {
         open: true,
         // 同一ネットワーク内の別端末から http://IPアドレス:8080/ でアクセスできるようにするため
         host: "local-ip",
+    },
+    experiments: {
+        asyncWebAssembly: true,
     },
 };
 module.exports = config;

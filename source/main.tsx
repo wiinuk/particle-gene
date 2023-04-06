@@ -1,6 +1,6 @@
 import { addStyle, waitElementLoaded } from "./document-extensions";
-import { workerSpec } from "./channel-specs";
-import { connectWorker } from "./worker-module";
+import { mainSpec, workerSpec } from "./module-specs";
+import { connect } from "./p2p";
 import classNames, { cssText } from "./styles.module.css";
 
 function handleAsyncError(promise: Promise<void>) {
@@ -55,14 +55,15 @@ async function asyncMain() {
 
     document.body.append(mainElement);
 
-    const { worker } = connectWorker(
+    const worker = connect(
         new Worker(new URL("./worker.ts", import.meta.url)),
         workerSpec,
         {
             fpsUpdated(fps) {
                 fpsDisplay.innerText = `FPS: ${fps}`;
             },
-        }
+        },
+        mainSpec
     );
 
     canvas.addEventListener("pointerdown", () => worker.mouseDown());
@@ -76,7 +77,11 @@ async function asyncMain() {
     );
 
     const offscreenCanvas = canvas.transferControlToOffscreen();
-    worker.initialize(offscreenCanvas, [offscreenCanvas]);
+    await worker.initialize(offscreenCanvas, [offscreenCanvas]);
+    worker.canvasWrapperResized(
+        canvasWrapper.offsetWidth,
+        canvasWrapper.offsetHeight
+    );
 }
 
 handleAsyncError(asyncMain());
