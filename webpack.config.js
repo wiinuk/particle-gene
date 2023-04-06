@@ -34,6 +34,9 @@ const config = {
     output: {
         path: output,
         filename: `index.js`,
+        clean: {
+            keep: "index.html",
+        },
     },
     devServer: {
         static: output,
